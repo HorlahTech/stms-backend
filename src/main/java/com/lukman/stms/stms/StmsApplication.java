@@ -10,7 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @SpringBootApplication
 
-@Profile("local")
+@Profile("dev")
 
 public class StmsApplication {
 
