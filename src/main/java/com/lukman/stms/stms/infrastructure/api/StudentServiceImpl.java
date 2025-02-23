@@ -28,10 +28,11 @@ import com.lukman.stms.stms.models.StudentTermDataJ;
 import com.lukman.stms.stms.service.StudentService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @AllArgsConstructor
-// @Slf4j
+@Slf4j
 public class StudentServiceImpl implements StudentService {
 
     private StudentRepository repository;
