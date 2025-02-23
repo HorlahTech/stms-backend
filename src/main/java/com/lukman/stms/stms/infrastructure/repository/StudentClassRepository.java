@@ -15,9 +15,11 @@ import java.util.List;
 
 @Repository
 public interface StudentClassRepository extends MongoRepository<StudentClass, String> {
-    Optional<StudentClass> findByNameAndTermAndSession(String name, int term, String session);
+    Optional<StudentClass> findByClassNameAndTermAndSession(String name, int term, String session);
 
     List<StudentClass> findBySession(String session);
+
+    List<StudentClass> findBySessionAndTerm(String session, int term);
 
     Boolean existsBySession(String session);
 

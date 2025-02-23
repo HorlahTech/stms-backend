@@ -18,7 +18,7 @@ import lombok.Setter;
 @Getter
 public class StudentClassDto {
 
-    private ClassEnum name;
+    private ClassEnum className;
     // String allias;
     private int term;
     private String teacher;
@@ -30,8 +30,8 @@ public class StudentClassDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate endDate;
 
-    public StudentClassDto(ClassEnum name, int term, String session) {
-        this.name = name;
+    public StudentClassDto(ClassEnum className, int term, String session) {
+        this.className = className;
         this.term = term;
         this.session = session;
     }

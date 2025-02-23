@@ -3,32 +3,43 @@ package com.lukman.stms.stms.models;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.lukman.stms.stms.application.constant.ClassEnum;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-
+@ToString
+@CompoundIndex(name = "name_term_session_idx", def = "{'name': 1, 'term':1,'session': -1}")
 public class StudentClass {
     @Id
     private String id;
-    private ClassEnum name;
+    @Indexed
+    private String className;
     private int term;
-    private String teacher;
+    private String teacherId;
+    @Indexed(unique = true)
     private String session;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate startDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate endDate;
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
 }

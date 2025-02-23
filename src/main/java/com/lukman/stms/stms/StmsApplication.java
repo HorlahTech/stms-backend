@@ -5,12 +5,15 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @SpringBootApplication
-
-@Profile("dev")
+@Profile("local")
+@EnableMongoAuditing
+// @EnableAutoConfiguration(exclude = { MongoReactiveAutoConfiguration.class })
 
 public class StmsApplication {
 

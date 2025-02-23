@@ -10,23 +10,31 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@AllArgsConstructor
 @NoArgsConstructor
-@Getter
+@AllArgsConstructor
 @Setter
-public class StudentGuardian {
+@Getter
+@ToString
+public class StudentTermDataJ {
     @Id
     private String id;
-    private String fullName;
-    private String address;
-    private String relationShip;
-    private String phoneNumber;
-    private String altphoneNumber;
+    private String studentId;
+    private String classId;
+    private int lastTermDebt;
+    private int currentTermBalance;
+    private int amountPaid;
     @CreatedDate
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public StudentTermDataJ(String studentId, String classId) {
+        this.studentId = studentId;
+        this.classId = classId;
+    }
+    
 
 }

@@ -1,5 +1,6 @@
 package com.lukman.stms.stms.presentation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,17 +10,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lukman.stms.stms.application.constant.ClassEnum;
 import com.lukman.stms.stms.application.constant.StudentStatus;
 import com.lukman.stms.stms.application.dto.request.RegStudentDto;
+import com.lukman.stms.stms.application.dto.response.StudentResponseDto;
 import com.lukman.stms.stms.application.dto.response.SuccessResponse;
 import com.lukman.stms.stms.infrastructure.api.StudentServiceImpl;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/api/student")
 public class StudentController {
     @Autowired
     private StudentServiceImpl studentService;
@@ -37,10 +39,19 @@ public class StudentController {
 
     @GetMapping("/fetch-all")
 
-    public ResponseEntity<SuccessResponse<List<RegStudentDto>>> fetchAllStudent(
-            @RequestParam(required = false) StudentStatus status) {
-        List<RegStudentDto> students = studentService.getallStudent(status);
-        SuccessResponse<List<RegStudentDto>> message = new SuccessResponse<List<RegStudentDto>>(
+    public ResponseEntity<SuccessResponse<List<StudentResponseDto>>> fetchAllStudent(
+            @RequestParam(required = false) StudentStatus status,
+            @RequestParam(required = false) String className,
+            @RequestParam String session,
+            @RequestParam int term) {
+        List<StudentResponseDto> students = new ArrayList<StudentResponseDto>();
+        if (className == null) {
+            students = studentService.getallStudent(session, term);
+        } else {
+            students = studentService.getallStudent(ClassEnum.valueOf(className), session, term);
+        }
+
+        SuccessResponse<List<StudentResponseDto>> message = new SuccessResponse<List<StudentResponseDto>>(
                 "Student fetched Successful",
                 200,
                 students);
