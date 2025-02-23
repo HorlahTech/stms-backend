@@ -3,7 +3,9 @@ package com.lukman.stms.stms.infrastructure.api;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -16,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lukman.stms.stms.application.constant.ClassEnum;
 import com.lukman.stms.stms.application.constant.StudentStatus;
 import com.lukman.stms.stms.application.dto.request.RegStudentDto;
+import com.lukman.stms.stms.application.dto.request.StudentClassDto;
 import com.lukman.stms.stms.application.dto.response.StudentResponseDto;
 import com.lukman.stms.stms.infrastructure.exception.EmptyFieldException;
 import com.lukman.stms.stms.infrastructure.exception.UserNotFoundException;
@@ -77,30 +80,6 @@ public class StudentServiceImpl implements StudentService {
 
     }
 
-    // @Override
-    // public List<StudentResponseDto> getallStudent(String className, String
-    // session, int term) {
-    // // StudentResponseDto
-    // if (status == null) {
-    // status = StudentStatus.active;
-    // }
-    // final StudentClass _class =
-    // studentClassRepo.findByClassNameAndTermAndSession();
-    // List<StudentJ> response = repository.findByStatus(status);
-    // final List<StudentResponseDto> dto = new ArrayList<StudentResponseDto>();
-    // for (StudentJ student : response) {
-    // final StudentResponseDto studentDto = modelMapper.map(student,
-    // StudentResponseDto.class);
-    // studentTermRepo.findByStudentId(student.getId());
-
-    // studentDto.
-
-    // dto.add(modelMapper.map(student, StudentResponseDto.class));
-    // }
-
-    // return dto;
-    // }
-
     @Override
     public List<StudentResponseDto> getallStudent(String session, int term) {
         final List<StudentClass> _classes = studentClassRepo.findBySessionAndTerm(session, term);
@@ -157,6 +136,25 @@ public class StudentServiceImpl implements StudentService {
         }).collect(Collectors.toList());
 
         return students;
+    }
+
+    @Override
+    public List<StudentResponseDto> getallStudent(String session) {
+        List<StudentResponseDto> response = new ArrayList<StudentResponseDto>();
+        List<StudentClass> _classes = studentClassRepo.findBySession(session);
+        _classes.stream().map(_class -> {
+            List<StudentResponseDto> students = studentTermRepo.findByClassId(session).stream().map(_term -> {
+                StudentJ student = repository.findById(_term.getStudentId())
+                        .orElseThrow(() -> new UserNotFoundException(String.format("Student with Id %s not Found"),
+                                _term.getStudentId()));
+
+                return modelMapper.map(student, StudentResponseDto.class);
+            }).collect(Collectors.toList());
+            response.addAll(students);
+            return students;
+
+        });
+        return response;
     }
 
 }

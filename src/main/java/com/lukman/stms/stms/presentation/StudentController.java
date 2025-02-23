@@ -43,10 +43,12 @@ public class StudentController {
             @RequestParam(required = false) StudentStatus status,
             @RequestParam(required = false) String className,
             @RequestParam String session,
-            @RequestParam int term) {
+            @RequestParam(required = false) Integer term) {
         List<StudentResponseDto> students = new ArrayList<StudentResponseDto>();
         if (className == null) {
             students = studentService.getallStudent(session, term);
+        } else if (term == null) {
+            students = studentService.getallStudent(session);
         } else {
             students = studentService.getallStudent(ClassEnum.valueOf(className), session, term);
         }

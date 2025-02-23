@@ -1,9 +1,13 @@
 package com.lukman.stms.stms.infrastructure.exception;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -43,6 +47,19 @@ public class AllCustomExceptionHandler extends ResponseEntityExceptionHandler {
         ResponseErrorDetails err = new ResponseErrorDetails(ex.getMessage(), 400,
                 LocalDateTime.now());
         return new ResponseEntity<ResponseErrorDetails>(err, HttpStatus.BAD_REQUEST);
+    }
+
+    // @ExceptionHandler(value = MissingServletRequestParameterException.class)
+    @Override
+    public ResponseEntity handleMissingServletRequestParameter(
+            MissingServletRequestParameterException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
+        return ResponseEntity.badRequest().body(Map.of(
+                "message", "Missing required parameter: " + ex.getParameterName(),
+                "status", 400,
+                "timeStamp", LocalDateTime.now()));
     }
 
 }

@@ -16,4 +16,6 @@ public interface StudentService {
 
     public List<StudentResponseDto> getallStudent(String session, int term);
 
+    public List<StudentResponseDto> getallStudent(String session);
+
 }

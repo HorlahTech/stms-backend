@@ -37,7 +37,7 @@ public class StudentClassImpl implements StudentClassService {
       throw new ConflictException("Session Already Exist");
     }
     List<StudentClass> classList = new ArrayList<>();
-    for (int i = 0; i < 3; i++) {
+    for (int i = 1; i <= 3; i++) {
       for (int j = 0; j < ClassEnum.values().length; j++) {
 
         StudentClassDto studentClassDto = new StudentClassDto(ClassEnum.values()[j], i, session.getSession());
