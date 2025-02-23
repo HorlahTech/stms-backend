@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 
 import com.lukman.stms.stms.application.constant.ClassEnum;
 import com.lukman.stms.stms.application.dto.request.StudentClassDto;
-import com.lukman.stms.stms.application.dto.request.UpdateTermDto;
+import com.lukman.stms.stms.application.dto.request.TermDto;
+import com.lukman.stms.stms.application.dto.request.SessionDto;
 import com.lukman.stms.stms.infrastructure.exception.ConflictException;
 import com.lukman.stms.stms.infrastructure.exception.EmptyFieldException;
+import com.lukman.stms.stms.infrastructure.exception.UserNotFoundException;
 import com.lukman.stms.stms.infrastructure.repository.StudentClassRepository;
 import com.lukman.stms.stms.models.FeesStructureJ;
 import com.lukman.stms.stms.models.StudentClass;
@@ -64,7 +66,7 @@ public class StudentClassImpl implements StudentClassService {
   }
 
   @Override
-  public void updateTermDate(UpdateTermDto updateTermDto) {
+  public void updateTermDate(SessionDto updateTermDto) {
     if (updateTermDto.getSession() == null || updateTermDto.getSession().isBlank()
         || updateTermDto.getSession().isEmpty()) {
       throw new EmptyFieldException("Session can not be Empty");
@@ -113,6 +115,22 @@ public class StudentClassImpl implements StudentClassService {
   public List<FeesStructureJ> fetchFees() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'fetchFees'");
+  }
+
+  @Override
+  public SessionDto getSession(String session) {
+    List<StudentClass> classes = studentClassRepository.findBySession(session);
+    StudentClass first = classes.stream().filter(clas -> clas.getTerm().equals(1)).findFirst()
+        .orElseThrow(() -> new UserNotFoundException("Class Not found"));
+    StudentClass second = classes.stream().filter(clas -> clas.getTerm().equals(2)).findFirst()
+        .orElseThrow(() -> new UserNotFoundException("Class Not found"));
+    StudentClass third = classes.stream().filter(clas -> clas.getTerm().equals(3)).findFirst()
+        .orElseThrow(() -> new UserNotFoundException("Class Not found"));
+    SessionDto sessionDto = new SessionDto(session,
+        new TermDto(first.getTerm(), first.getStartDate(), first.getEndDate()),
+        new TermDto(second.getTerm(), second.getStartDate(), second.getEndDate()),
+        new TermDto(third.getTerm(), third.getStartDate(), third.getEndDate()));
+    return sessionDto;
   }
 
 }

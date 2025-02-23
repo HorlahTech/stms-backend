@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lukman.stms.stms.application.dto.request.StudentClassDto;
-import com.lukman.stms.stms.application.dto.request.UpdateTermDto;
+import com.lukman.stms.stms.application.dto.request.SessionDto;
 import com.lukman.stms.stms.application.dto.response.EmptyReponseDto;
 import com.lukman.stms.stms.application.dto.response.SuccessResponse;
 import com.lukman.stms.stms.infrastructure.exception.UnknownException;
@@ -50,9 +50,19 @@ public class SettingController {
         return ResponseEntity.status(200).body(res);
     }
 
+    @GetMapping("/session")
+    public ResponseEntity<SuccessResponse<SessionDto>> getSession(
+            @RequestParam String sessionName) {
+        logger.info("getallSession call");
+        final SessionDto response = service.getSession(sessionName);
+        final SuccessResponse<SessionDto> res = new SuccessResponse<>("Recored Fetched Sucessfully", 200,
+                response);
+        return ResponseEntity.status(200).body(res);
+    }
+
     @PatchMapping("/update-term")
     public ResponseEntity<SuccessResponse> upadateTermDate(
-            @RequestBody UpdateTermDto updateTermDto) {
+            @RequestBody SessionDto updateTermDto) {
         logger.info("upadateTermDate call");
         service.updateTermDate(updateTermDto);
         final SuccessResponse res = new SuccessResponse<>("Update Successfully", 200);

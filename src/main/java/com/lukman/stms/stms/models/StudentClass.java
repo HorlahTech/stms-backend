@@ -27,15 +27,15 @@ public class StudentClass {
     private String id;
     @Indexed
     private String className;
-    private int term;
+    private Integer term;
     private String teacherId;
     @Indexed(unique = true)
     private String session;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private LocalDate endDate;
+    private LocalDateTime endDate;
     @CreatedDate
     private LocalDateTime createdAt;
 

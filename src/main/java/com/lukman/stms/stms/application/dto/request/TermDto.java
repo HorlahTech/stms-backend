@@ -1,6 +1,7 @@
 package com.lukman.stms.stms.application.dto.request;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -16,12 +17,13 @@ import lombok.Setter;
 public class TermDto {
     private int term;
     @JsonFormat(pattern = "dd-MM-yyyy", shape = JsonFormat.Shape.STRING)
-    private LocalDate startDate;
+    private LocalDateTime startDate;
     @JsonFormat(pattern = "dd-MM-yyyy", shape = JsonFormat.Shape.STRING)
-    private LocalDate endDate;
-    public TermDto(int term, LocalDate startDate) {
+    private LocalDateTime endDate;
+
+    public TermDto(int term, LocalDateTime startDate) {
         this.term = term;
         this.startDate = startDate;
     }
-    
+
 }
