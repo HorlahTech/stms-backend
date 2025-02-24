@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lukman.stms.stms.models.StudentClass;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
