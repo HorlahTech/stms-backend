@@ -17,15 +17,35 @@ public class SessionDto {
     private TermDto secondTerm;
     private TermDto thirdTerm;
 
-    public SessionDto(String session, TermDto firstTerm) {
+    public SessionDto(String session, TermDto termDto) {
         this.session = session;
-        this.firstTerm = firstTerm;
+        if (termDto.getTerm() == 1) {
+            this.firstTerm = termDto;
+        } else if (termDto.getTerm() == 2) {
+            this.secondTerm = termDto;
+        } else {
+            this.thirdTerm = termDto;
+        }
+
     }
 
-    public SessionDto(String session, TermDto firstTerm, TermDto secondTerm) {
+    public SessionDto(String session, TermDto termOne, TermDto termTwo) {
         this.session = session;
-        this.firstTerm = firstTerm;
-        this.secondTerm = secondTerm;
+        if (termOne.getTerm() == 1) {
+            this.firstTerm = termOne;
+        } else if (termOne.getTerm() == 2) {
+            this.secondTerm = termOne;
+        } else {
+            this.thirdTerm = termOne;
+        }
+        if (termTwo.getTerm() == 1) {
+            this.firstTerm = termTwo;
+        } else if (termTwo.getTerm() == 2) {
+            this.secondTerm = termTwo;
+        } else {
+            this.thirdTerm = termTwo;
+        }
+
     }
 
 }
