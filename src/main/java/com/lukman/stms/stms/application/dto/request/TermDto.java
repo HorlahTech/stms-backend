@@ -16,12 +16,12 @@ import lombok.Setter;
 @Setter
 public class TermDto {
     private int term;
-    @JsonFormat(pattern = "dd-MM-yyyy", shape = JsonFormat.Shape.STRING)
-    private LocalDateTime startDate;
-    @JsonFormat(pattern = "dd-MM-yyyy", shape = JsonFormat.Shape.STRING)
-    private LocalDateTime endDate;
+    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+    private LocalDate startDate;
+    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+    private LocalDate endDate;
 
-    public TermDto(int term, LocalDateTime startDate) {
+    public TermDto(int term, LocalDate startDate) {
         this.term = term;
         this.startDate = startDate;
     }

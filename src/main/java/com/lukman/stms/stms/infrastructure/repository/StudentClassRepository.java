@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lukman.stms.stms.models.StudentClass;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -26,11 +26,11 @@ public interface StudentClassRepository extends MongoRepository<StudentClass, St
     @Transactional
     @Query("{'session':?0, 'term':?1}")
     @Update("{'$set':{'startDate': ?2}}")
-    void updateClassesStartDateBySessionAndTerm(String session, int term, LocalDateTime startDate);
+    void updateClassesStartDateBySessionAndTerm(String session, int term, LocalDate startDate);
 
     @Transactional
     @Query("{'session':?0, 'term':?1}")
     @Update("{'$set':{'endDate': ?2}}")
-    void updateClassesEndDateBySessionAndTerm(String session, int term, LocalDateTime startDate);
+    void updateClassesEndDateBySessionAndTerm(String session, int term, LocalDate startDate);
 
 }
