@@ -24,11 +24,14 @@ public class StudentClassDto {
     private String teacher;
     @NotNull(message = "Session cannot be null")
     private String session;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate startDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm::ss")
+    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy
+    // hh:mm::ss")
+    private LocalDateTime startDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate endDate;
+    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm::ss")
+    private LocalDateTime endDate;
 
     public StudentClassDto(ClassEnum className, int term, String session) {
         this.className = className;
