@@ -32,11 +32,15 @@ public class StudentClass {
     @Indexed(unique = true)
     private String session;
     // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern =
+    // "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", shape = JsonFormat.Shape.STRING)
     private LocalDateTime startDate;
 
     // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern =
+    // "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", shape = JsonFormat.Shape.STRING)
     private LocalDateTime endDate;
     @CreatedDate
     private LocalDateTime createdAt;
