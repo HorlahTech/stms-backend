@@ -9,24 +9,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.UUID;
 import com.lukman.stms.stms.application.constant.ClassEnum;
 import com.lukman.stms.stms.application.dto.request.StudentClassDto;
 import com.lukman.stms.stms.application.dto.request.TermDto;
+import com.lukman.stms.stms.application.dto.request.RegisterSchoolDto;
 import com.lukman.stms.stms.application.dto.request.SessionDto;
 import com.lukman.stms.stms.infrastructure.exception.ConflictException;
 import com.lukman.stms.stms.infrastructure.exception.EmptyFieldException;
 import com.lukman.stms.stms.infrastructure.exception.UserNotFoundException;
+import com.lukman.stms.stms.infrastructure.repository.SchoolDetailsRepository;
 import com.lukman.stms.stms.infrastructure.repository.StudentClassRepository;
 import com.lukman.stms.stms.models.FeesStructureJ;
+import com.lukman.stms.stms.models.SchoolDetails;
 import com.lukman.stms.stms.models.StudentClass;
 import com.lukman.stms.stms.service.StudentClassService;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class StudentClassImpl implements StudentClassService {
-  @Autowired
+
   private StudentClassRepository studentClassRepository;
-  @Autowired
+  private SchoolDetailsRepository schoolRepository;
   ModelMapper modelMapper;
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -131,6 +137,58 @@ public class StudentClassImpl implements StudentClassService {
         new TermDto(second.getTerm(), second.getStartDate(), second.getEndDate()),
         new TermDto(third.getTerm(), third.getStartDate(), third.getEndDate()));
     return sessionDto;
+  }
+
+  @Override
+  public RegisterSchoolDto SchoolSetUp(RegisterSchoolDto schoolDto) {
+
+    if (schoolDto.getName() == null || schoolDto.getName().isBlank() || schoolDto.getName().isEmpty()) {
+      throw new EmptyFieldException("School Name Cannot be Empty");
+    }
+    if (schoolDto.getAddress() == null || schoolDto.getAddress().isBlank() || schoolDto.getAddress().isEmpty()) {
+      throw new EmptyFieldException("School Address is Required");
+    }
+    if (schoolDto.getLocalGovernment() == null || schoolDto.getLocalGovernment().isBlank()
+        || schoolDto.getLocalGovernment().isEmpty()) {
+      throw new EmptyFieldException("School LGA is Required");
+    }
+    if (schoolDto.getState() == null || schoolDto.getState().isBlank()
+        || schoolDto.getState().isEmpty()) {
+      throw new EmptyFieldException("School Name State is required");
+
+    }
+    final SchoolDetails school = modelMapper.map(schoolDto, SchoolDetails.class);
+    if ((schoolDto.getIsGovernmentApproved() == null || schoolDto.getIsGovernmentApproved() == false)
+        && schoolDto.getApprovalCode() == null || schoolDto.getApprovalCode().isEmpty()) {
+      String schoolCode;
+      do {
+        schoolCode = generateSchoolCode(schoolDto.getName());
+      } while (schoolRepository.existsByCode(schoolCode));
+
+      school.setCode(schoolCode);
+    }
+
+    final SchoolDetails savedSchool = schoolRepository.save(school);
+    return modelMapper.map(savedSchool, RegisterSchoolDto.class);
+
+  }
+
+  private String generateSchoolCode(String schoolName) {
+    // Get first 3 letters of the school name (uppercase)
+    String prefix = schoolName.substring(0, 3).toUpperCase();
+
+    // Generate a hash from the school name (convert negative to positive)
+    int hash = Math.abs(schoolName.hashCode());
+
+    // Extract 2 digits from the hash (ensures same name → same hash part)
+    String hashPart = String.valueOf(hash).substring(0, 2);
+
+    // Generate a UUID and extract 1 alphanumeric character (ensures uniqueness)
+    String uniquePart = UUID.randomUUID().toString().replaceAll("[^a-zA-Z0-9]", "").substring(0, 2);
+
+    // Combine prefix, hash, and unique UUID part (total 6 characters)
+    return prefix + hashPart + uniquePart;
+
   }
 
 }

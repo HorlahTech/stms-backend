@@ -12,6 +12,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.context.request.WebRequest;
@@ -22,22 +23,22 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class AllCustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = { Exception.class })
-    public @ResponseBody ResponseEntity<ResponseErrorDetails> generalException(Exception ex, WebRequest request) {
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    public @ResponseBody ResponseEntity<ResponseErrorDetails> generalException(Exception ex) {
         ResponseErrorDetails err = new ResponseErrorDetails(ex.getMessage(),
                 500,
                 LocalDateTime.now());
         return new ResponseEntity<ResponseErrorDetails>(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    // @ExceptionHandler(value = { HttpMessageNotReadableException.class })
-    // public @ResponseBody ResponseEntity<ResponseErrorDetails>
-    // handleParseType(HttpMessageNotReadableException ex) {
-    // ResponseErrorDetails err = new ResponseErrorDetails(ex.getMessage(),
-    // 500,
-    // LocalDateTime.now());
-    // return new ResponseEntity<ResponseErrorDetails>(err,
-    // HttpStatus.INTERNAL_SERVER_ERROR);
-    // }
+    @ExceptionHandler(value = { ForbiddenException.class })
+    public @ResponseBody ResponseEntity<ResponseErrorDetails> handleParseType(ForbiddenException ex) {
+        ResponseErrorDetails err = new ResponseErrorDetails(ex.getMessage(),
+                403,
+                LocalDateTime.now());
+        return new ResponseEntity<ResponseErrorDetails>(err,
+                HttpStatus.FORBIDDEN);
+    }
 
     @ExceptionHandler(value = { UserNotFoundException.class })
     public ResponseEntity<ResponseErrorDetails> notFoundError(Exception ex, WebRequest request) {
@@ -60,6 +61,7 @@ public class AllCustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<ResponseErrorDetails>(err, HttpStatus.BAD_REQUEST);
     }
 
+    // @ExceptionHandler(Foridde)
     // @ExceptionHandler(value = MissingServletRequestParameterException.class)
     @Override
     public ResponseEntity handleMissingServletRequestParameter(

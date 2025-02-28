@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lukman.stms.stms.application.dto.request.StudentClassDto;
+import com.lukman.stms.stms.application.dto.request.RegisterSchoolDto;
 import com.lukman.stms.stms.application.dto.request.SessionDto;
 import com.lukman.stms.stms.application.dto.response.EmptyReponseDto;
 import com.lukman.stms.stms.application.dto.response.SuccessResponse;
@@ -67,6 +68,15 @@ public class SettingController {
         service.updateTermDate(updateTermDto);
         final SuccessResponse res = new SuccessResponse<>("Update Successfully", 200);
         return ResponseEntity.status(200).body(res);
+    }
+
+    @PostMapping("/school")
+    public ResponseEntity<SuccessResponse<RegisterSchoolDto>> registerSchool(
+            @RequestBody RegisterSchoolDto schoolEntity) {
+        RegisterSchoolDto school = service.SchoolSetUp(schoolEntity);
+        final SuccessResponse<RegisterSchoolDto> res = new SuccessResponse<RegisterSchoolDto>("Update Successfully",
+                200, school);
+        return ResponseEntity.status(201).body(res);
     }
 
 }
