@@ -3,6 +3,7 @@ package com.lukman.stms.stms.service;
 import java.util.List;
 
 import com.lukman.stms.stms.application.dto.request.StudentClassDto;
+import com.lukman.stms.stms.application.dto.request.FeesDto;
 import com.lukman.stms.stms.application.dto.request.RegisterSchoolDto;
 import com.lukman.stms.stms.application.dto.request.SessionDto;
 import com.lukman.stms.stms.infrastructure.exception.UnknownException;
@@ -20,5 +21,7 @@ public interface StudentClassService {
     public void updateTermDate(SessionDto terms);
 
     public List<FeesStructureJ> fetchFees();
+
+    public FeesDto createFee(FeesDto fee);
 
 }

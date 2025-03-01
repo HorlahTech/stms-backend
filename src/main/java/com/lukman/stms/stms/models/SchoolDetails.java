@@ -26,6 +26,7 @@ public class SchoolDetails {
     private String name;
     private String address;
     private String state;
+    private String city;
     private String localGovernment;
     private Boolean isGovernmentApproved;
     private String approvalCode;

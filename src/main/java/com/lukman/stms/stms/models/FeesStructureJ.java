@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 
+import com.lukman.stms.stms.application.constant.Applicability;
 import com.lukman.stms.stms.application.constant.AvailabilityEnum;
 
 import lombok.AllArgsConstructor;
@@ -22,12 +23,8 @@ public class FeesStructureJ {
     private int term;
     private String feeName;
     private int amount;
-    private FeesApplicabilityEnumY applicability;
+    private Applicability applicability;
     private AvailabilityEnum availabilityStatus;
     private String schoolCode;
     private List<String> classesNames;
-}
-
-enum FeesApplicabilityEnumY {
-    required, optional
 }

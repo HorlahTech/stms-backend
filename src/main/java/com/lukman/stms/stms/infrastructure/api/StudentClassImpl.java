@@ -14,11 +14,13 @@ import com.lukman.stms.stms.application.appconfig.SchoolContext;
 import com.lukman.stms.stms.application.constant.ClassEnum;
 import com.lukman.stms.stms.application.dto.request.StudentClassDto;
 import com.lukman.stms.stms.application.dto.request.TermDto;
+import com.lukman.stms.stms.application.dto.request.FeesDto;
 import com.lukman.stms.stms.application.dto.request.RegisterSchoolDto;
 import com.lukman.stms.stms.application.dto.request.SessionDto;
 import com.lukman.stms.stms.infrastructure.exception.ConflictException;
 import com.lukman.stms.stms.infrastructure.exception.EmptyFieldException;
 import com.lukman.stms.stms.infrastructure.exception.UserNotFoundException;
+import com.lukman.stms.stms.infrastructure.repository.FeesStructureRepository;
 import com.lukman.stms.stms.infrastructure.repository.SchoolDetailsRepository;
 import com.lukman.stms.stms.infrastructure.repository.StudentClassRepository;
 import com.lukman.stms.stms.models.FeesStructureJ;
@@ -35,6 +37,7 @@ public class StudentClassImpl implements StudentClassService {
   private StudentClassRepository studentClassRepository;
   private SchoolDetailsRepository schoolRepository;
   private ModelMapper modelMapper;
+  private FeesStructureRepository feesRepo;
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
   @Override
@@ -160,19 +163,21 @@ public class StudentClassImpl implements StudentClassService {
     }
     if (schoolDto.getState() == null || schoolDto.getState().isBlank()
         || schoolDto.getState().isEmpty()) {
-      throw new EmptyFieldException("School Name State is required");
+      throw new EmptyFieldException("School State is required");
+
+    }
+    if (schoolDto.getCity() == null || schoolDto.getCity().isBlank()
+        || schoolDto.getCity().isEmpty()) {
+      throw new EmptyFieldException("City is required");
 
     }
     final SchoolDetails school = modelMapper.map(schoolDto, SchoolDetails.class);
-    if ((schoolDto.getIsGovernmentApproved() == null || schoolDto.getIsGovernmentApproved() == false)
-        && schoolDto.getApprovalCode() == null || schoolDto.getApprovalCode().isEmpty()) {
-      String schoolCode;
-      do {
-        schoolCode = generateSchoolCode(schoolDto.getName());
-      } while (schoolRepository.existsByCode(schoolCode));
+    String schoolCode;
+    do {
+      schoolCode = generateSchoolCode(schoolDto.getName());
+    } while (schoolRepository.existsByCode(schoolCode));
 
-      school.setCode(schoolCode);
-    }
+    school.setCode(schoolCode);
 
     final SchoolDetails savedSchool = schoolRepository.save(school);
     return modelMapper.map(savedSchool, RegisterSchoolDto.class);
@@ -195,6 +200,15 @@ public class StudentClassImpl implements StudentClassService {
     // Combine prefix, hash, and unique UUID part (total 6 characters)
     return prefix + hashPart + uniquePart;
 
+  }
+
+  @Override
+  public FeesDto createFee(FeesDto fee) {
+
+    FeesStructureJ newFee = modelMapper.map(fee, FeesStructureJ.class);
+    newFee.setSchoolCode(SchoolContext.getSchoolCode());
+
+    return modelMapper.map(feesRepo.save(newFee), FeesDto.class);
   }
 
 }
