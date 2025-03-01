@@ -16,17 +16,17 @@ import java.util.List;
 
 @Repository
 public interface StudentClassRepository extends MongoRepository<StudentClass, String> {
-    @Query("{'className':?0, 'term':?1, 'session':?2, 'schoolCode':?3}")
+    // @Query("{'className':?0, 'term':?1, 'session':?2, 'schoolCode':?3}")
     Optional<StudentClass> findByClassNameAndTermAndSessionAndSchoolCode(String className, int term, String session,
             String schoolCode);
 
-    @Query("{'session':?0, 'schoolCode'?1}")
+    // @Query("{'session':?0, 'schoolCode'?1}")
     List<StudentClass> findBySessionAndSchoolCode(String session, String schoolCode);
 
-    @Query("{'session':?0, 'term':?1, 'schoolCode':?2}")
+    // @Query("{'session':?0, 'term':?1, 'schoolCode':?2}")
     List<StudentClass> findBySessionAndTermAndSchoolCode(String session, int term, String schoolCodeString);
 
-    @Query("{'session':?0,  'schoolCode':?1}")
+    // @Query("{'session':?0, 'schoolCode':?1}")
     Boolean existsBySessionAndSchoolCode(String session, String schoolCode);
 
     @Transactional

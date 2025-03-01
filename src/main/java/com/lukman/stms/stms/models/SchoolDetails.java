@@ -19,7 +19,7 @@ import lombok.Setter;
 public class SchoolDetails {
     @Id
     private String id;
-    @Indexed
+    @Indexed(unique = true)
     private String code;
     private String emailAddress;
     private String phoneNumber;

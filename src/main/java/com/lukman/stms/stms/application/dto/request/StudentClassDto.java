@@ -1,6 +1,5 @@
 package com.lukman.stms.stms.application.dto.request;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;

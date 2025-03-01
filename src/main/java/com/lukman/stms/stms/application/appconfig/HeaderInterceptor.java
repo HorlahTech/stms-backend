@@ -1,15 +1,10 @@
 package com.lukman.stms.stms.application.appconfig;
 
-import java.time.LocalDateTime;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.lukman.stms.stms.infrastructure.exception.ForbiddenException;
-import com.lukman.stms.stms.infrastructure.repository.SchoolDetailsRepository;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -24,9 +19,10 @@ public class HeaderInterceptor implements HandlerInterceptor {
         if (schoolCode == null || schoolCode.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             throw new ForbiddenException("School Code is Required");
+        } else {
+            SchoolContext.setSchoolCode(schoolCode);
         }
 
-        SchoolContext.setSchoolCode(schoolCode);
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }
 
