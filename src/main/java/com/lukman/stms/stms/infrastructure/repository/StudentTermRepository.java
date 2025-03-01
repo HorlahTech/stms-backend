@@ -9,8 +9,8 @@ import com.lukman.stms.stms.models.StudentTermDataJ;
 
 @Repository
 public interface StudentTermRepository extends MongoRepository<StudentTermDataJ, String> {
-    List<StudentTermDataJ> findByStudentId(String studentId);
+    List<StudentTermDataJ> findByStudentIdAndSchoolCode(String studentId, String schoolCode);
 
-    List<StudentTermDataJ> findByClassId(String classId);
+    List<StudentTermDataJ> findByClassIdAndSchoolCode(String classId, String schoolCode);
 
 }

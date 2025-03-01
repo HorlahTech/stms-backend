@@ -25,8 +25,10 @@ public class StudentTermDataJ {
     private int lastTermDebt;
     private int currentTermBalance;
     private int amountPaid;
+    private String schoolCode;
     @CreatedDate
     private LocalDateTime createdAt;
+
 
     @LastModifiedDate
     private LocalDateTime updatedAt;

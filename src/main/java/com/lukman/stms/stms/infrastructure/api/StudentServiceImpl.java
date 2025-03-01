@@ -1,24 +1,18 @@
 package com.lukman.stms.stms.infrastructure.api;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.naming.NameNotFoundException;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lukman.stms.stms.application.appconfig.SchoolContext;
 import com.lukman.stms.stms.application.constant.ClassEnum;
 import com.lukman.stms.stms.application.constant.StudentStatus;
 import com.lukman.stms.stms.application.dto.request.RegStudentDto;
-import com.lukman.stms.stms.application.dto.request.StudentClassDto;
 import com.lukman.stms.stms.application.dto.response.StudentResponseDto;
 import com.lukman.stms.stms.infrastructure.exception.EmptyFieldException;
 import com.lukman.stms.stms.infrastructure.exception.UserNotFoundException;
@@ -65,9 +59,10 @@ public class StudentServiceImpl implements StudentService {
         // StudentJ newStudent = new StudentJ();
         // StudentTermDataJ studentTerm = new StudentTermDataJ();
         StudentJ newStudent = modelMapper.map(student, StudentJ.class);
-        StudentClass clas = studentClassRepo.findByClassNameAndTermAndSession(student.getClassName(),
+        StudentClass clas = studentClassRepo.findByClassNameAndTermAndSessionAndSchoolCode(student.getClassName(),
                 student.getTerm(),
-                student.getSession()).orElseThrow(() -> new UserNotFoundException("Class Not found"));
+                student.getSession(), SchoolContext.getSchoolCode())
+                .orElseThrow(() -> new UserNotFoundException("Class Not found"));
 
         if (newStudent.getRegistrationDate() == null) {
             newStudent.setRegistrationDate(LocalDate.now());
@@ -82,11 +77,13 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<StudentResponseDto> getallStudent(String session, int term) {
-        final List<StudentClass> _classes = studentClassRepo.findBySessionAndTerm(session, term);
+        final List<StudentClass> _classes = studentClassRepo.findBySessionAndTermAndSchoolCode(session, term,
+                SchoolContext.getSchoolCode());
         // System.out.println(_classes);
         final List<StudentResponseDto> studentDto = new ArrayList<StudentResponseDto>();
         for (StudentClass _class : _classes) {
-            final List<StudentTermDataJ> termData = studentTermRepo.findByClassId(_class.getId());
+            final List<StudentTermDataJ> termData = studentTermRepo.findByClassIdAndSchoolCode(_class.getId(),
+                    SchoolContext.getSchoolCode());
 
             System.out.println(termData);
             List<StudentResponseDto> students = termData.stream().map(_term -> {
@@ -121,9 +118,12 @@ public class StudentServiceImpl implements StudentService {
         if (session == null) {
             throw new EmptyFieldException("Session Name cannot be empty");
         }
-        final StudentClass _class = studentClassRepo.findByClassNameAndTermAndSession(classname.name(), term,
-                session).orElseThrow(() -> new UserNotFoundException("Class Not Found"));
-        final List<StudentTermDataJ> termData = studentTermRepo.findByClassId(_class.getId());
+        final StudentClass _class = studentClassRepo
+                .findByClassNameAndTermAndSessionAndSchoolCode(classname.name(), term,
+                        session, SchoolContext.getSchoolCode())
+                .orElseThrow(() -> new UserNotFoundException("Class Not Found"));
+        final List<StudentTermDataJ> termData = studentTermRepo.findByClassIdAndSchoolCode(_class.getId(),
+                SchoolContext.getSchoolCode());
         List<StudentResponseDto> students = termData.stream().map(termDataJ -> {
             StudentJ student = repository.findById(termDataJ.getStudentId())
                     .orElseThrow(() -> new UserNotFoundException(
@@ -141,15 +141,19 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentResponseDto> getallStudent(String session) {
         List<StudentResponseDto> response = new ArrayList<StudentResponseDto>();
-        List<StudentClass> _classes = studentClassRepo.findBySession(session);
+        List<StudentClass> _classes = studentClassRepo.findBySessionAndSchoolCode(session,
+                SchoolContext.getSchoolCode());
         _classes.stream().map(_class -> {
-            List<StudentResponseDto> students = studentTermRepo.findByClassId(session).stream().map(_term -> {
-                StudentJ student = repository.findById(_term.getStudentId())
-                        .orElseThrow(() -> new UserNotFoundException(String.format("Student with Id %s not Found"),
-                                _term.getStudentId()));
+            List<StudentResponseDto> students = studentTermRepo
+                    .findByClassIdAndSchoolCode(session, SchoolContext.getSchoolCode()).stream()
+                    .map(_term -> {
+                        StudentJ student = repository.findById(_term.getStudentId())
+                                .orElseThrow(
+                                        () -> new UserNotFoundException(String.format("Student with Id %s not Found"),
+                                                _term.getStudentId()));
 
-                return modelMapper.map(student, StudentResponseDto.class);
-            }).collect(Collectors.toList());
+                        return modelMapper.map(student, StudentResponseDto.class);
+                    }).collect(Collectors.toList());
             response.addAll(students);
             return students;
 

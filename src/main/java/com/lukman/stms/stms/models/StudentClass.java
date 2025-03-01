@@ -31,6 +31,7 @@ public class StudentClass {
     private String teacherId;
     @Indexed(unique = true)
     private String session;
+    private String schoolCode;
     // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern =
     // "yyyy-MM-dd'T'HH:mm:ss.SSSZ")

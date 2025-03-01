@@ -7,4 +7,6 @@ import com.lukman.stms.stms.models.SchoolDetails;
 public interface SchoolDetailsRepository extends MongoRepository<SchoolDetails, String> {
     boolean existsByCode(String code);
 
+    SchoolDetails findByCode(String code);
+
 }

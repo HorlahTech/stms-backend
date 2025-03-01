@@ -8,8 +8,9 @@ import org.springframework.data.mongodb.repository.Query;
 import com.lukman.stms.stms.models.FeesStructureJ;
 
 public interface FeesStructureRepository extends MongoRepository<FeesStructureJ, String> {
-    @Query("{'classesNames':?0,'sessionName':?1, 'term':?2}")
-    List<FeesStructureJ> findByClassesNamesAndSessionNameAndTerm(List<String> classesNames, String sessionName,
-            int term);
+    @Query("{'classesNames':?0,'sessionName':?1, 'term':?2, 'schoolCode':?3}")
+    List<FeesStructureJ> findByClassesNamesAndSessionNameAndTermAndSchoolCode(List<String> classesNames,
+            String sessionName,
+            int term, String schoolCode);
 
 }

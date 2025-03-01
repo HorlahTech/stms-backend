@@ -7,9 +7,10 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
+
+import com.lukman.stms.stms.application.appconfig.SchoolContext;
 import com.lukman.stms.stms.application.constant.ClassEnum;
 import com.lukman.stms.stms.application.dto.request.StudentClassDto;
 import com.lukman.stms.stms.application.dto.request.TermDto;
@@ -33,15 +34,16 @@ public class StudentClassImpl implements StudentClassService {
 
   private StudentClassRepository studentClassRepository;
   private SchoolDetailsRepository schoolRepository;
-  ModelMapper modelMapper;
+  private ModelMapper modelMapper;
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
   @Override
   public void sessionSetUp(StudentClassDto session) {
+
     if (session.getSession() == null || session.getSession().isBlank() || session.getSession().isEmpty()) {
       throw new EmptyFieldException("Session Name Cannot be null");
     }
-    if (studentClassRepository.existsBySession(session.getSession())) {
+    if (studentClassRepository.existsBySessionAndSchoolCode(session.getSession(), SchoolContext.getSchoolCode())) {
       throw new ConflictException("Session Already Exist");
     }
     List<StudentClass> classList = new ArrayList<>();
@@ -49,8 +51,9 @@ public class StudentClassImpl implements StudentClassService {
       for (int j = 0; j < ClassEnum.values().length; j++) {
 
         StudentClassDto studentClassDto = new StudentClassDto(ClassEnum.values()[j], i, session.getSession());
-
-        classList.add(modelMapper.map(studentClassDto, StudentClass.class));
+        StudentClass _class = modelMapper.map(studentClassDto, StudentClass.class);
+        _class.setSchoolCode(SchoolContext.getSchoolCode());
+        classList.add(_class);
       }
     }
 
@@ -62,7 +65,8 @@ public class StudentClassImpl implements StudentClassService {
     if (session == null || session.isBlank() || session.isEmpty()) {
       throw new EmptyFieldException("Session Name Cannot be null");
     }
-    final List<StudentClass> response = studentClassRepository.findBySession(session);
+    final List<StudentClass> response = studentClassRepository.findBySessionAndSchoolCode(session,
+        SchoolContext.getSchoolCode());
 
     java.lang.reflect.Type listType = new TypeToken<List<StudentClassDto>>() {
     }.getType();
@@ -80,38 +84,39 @@ public class StudentClassImpl implements StudentClassService {
 
     // Update First term start Date
     if (updateTermDto.getFirstTerm() != null && updateTermDto.getFirstTerm().getStartDate() != null) {
-      studentClassRepository.updateClassesStartDateBySessionAndTerm(updateTermDto.getSession(), 1,
-          updateTermDto.getFirstTerm().getStartDate());
+      studentClassRepository.updateClassesStartDateBySessionAndTermAndSchoolCode(
+          updateTermDto.getSession(), 1,
+          updateTermDto.getFirstTerm().getStartDate(), SchoolContext.getSchoolCode());
 
     }
     // Update First term end Date
     if (updateTermDto.getFirstTerm() != null && updateTermDto.getFirstTerm().getEndDate() != null) {
-      studentClassRepository.updateClassesEndDateBySessionAndTerm(updateTermDto.getSession(), 1,
-          updateTermDto.getFirstTerm().getEndDate());
+      studentClassRepository.updateClassesEndDateBySessionAndTermAndSchoolCode(updateTermDto.getSession(), 1,
+          updateTermDto.getFirstTerm().getEndDate(), SchoolContext.getSchoolCode());
 
     }
     // Update Second term start Date
     if (updateTermDto.getSecondTerm() != null && updateTermDto.getSecondTerm().getStartDate() != null) {
-      studentClassRepository.updateClassesStartDateBySessionAndTerm(updateTermDto.getSession(), 2,
-          updateTermDto.getSecondTerm().getStartDate());
+      studentClassRepository.updateClassesStartDateBySessionAndTermAndSchoolCode(updateTermDto.getSession(), 2,
+          updateTermDto.getSecondTerm().getStartDate(), SchoolContext.getSchoolCode());
 
     }
     // Update Second term end Date
     if (updateTermDto.getSecondTerm() != null && updateTermDto.getSecondTerm().getEndDate() != null) {
-      studentClassRepository.updateClassesEndDateBySessionAndTerm(updateTermDto.getSession(), 2,
-          updateTermDto.getSecondTerm().getEndDate());
+      studentClassRepository.updateClassesEndDateBySessionAndTermAndSchoolCode(updateTermDto.getSession(), 2,
+          updateTermDto.getSecondTerm().getEndDate(), SchoolContext.getSchoolCode());
 
     }
     // Update Third term start Date
     if (updateTermDto.getThirdTerm() != null && updateTermDto.getThirdTerm().getStartDate() != null) {
-      studentClassRepository.updateClassesStartDateBySessionAndTerm(updateTermDto.getSession(), 3,
-          updateTermDto.getThirdTerm().getStartDate());
+      studentClassRepository.updateClassesStartDateBySessionAndTermAndSchoolCode(updateTermDto.getSession(), 3,
+          updateTermDto.getThirdTerm().getStartDate(), SchoolContext.getSchoolCode());
 
     }
     // Update Third term end Date
     if (updateTermDto.getThirdTerm() != null && updateTermDto.getThirdTerm().getEndDate() != null) {
-      studentClassRepository.updateClassesEndDateBySessionAndTerm(updateTermDto.getSession(), 3,
-          updateTermDto.getThirdTerm().getEndDate());
+      studentClassRepository.updateClassesEndDateBySessionAndTermAndSchoolCode(updateTermDto.getSession(), 3,
+          updateTermDto.getThirdTerm().getEndDate(), SchoolContext.getSchoolCode());
 
     }
     logger.info("/{updateTermDto Updated}");
@@ -125,7 +130,8 @@ public class StudentClassImpl implements StudentClassService {
 
   @Override
   public SessionDto getSession(String session) {
-    List<StudentClass> classes = studentClassRepository.findBySession(session);
+    List<StudentClass> classes = studentClassRepository.findBySessionAndSchoolCode(session,
+        SchoolContext.getSchoolCode());
     StudentClass first = classes.stream().filter(clas -> clas.getTerm().equals(1)).findFirst()
         .orElseThrow(() -> new UserNotFoundException("Class Not found"));
     StudentClass second = classes.stream().filter(clas -> clas.getTerm().equals(2)).findFirst()

@@ -24,7 +24,7 @@ public class FeesStructureJ {
     private int amount;
     private FeesApplicabilityEnumY applicability;
     private AvailabilityEnum availabilityStatus;
-
+    private String schoolCode;
     private List<String> classesNames;
 }
 
