@@ -21,6 +21,7 @@ public class RegisterSchoolDto {
     private String address;
     private String state;
     private String city;
+    private String slogan;
     private String localGovernment;
     private Boolean isGovernmentApproved;
     private String approvalCode;
