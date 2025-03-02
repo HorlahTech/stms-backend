@@ -12,7 +12,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @SpringBootApplication
 // @Profile("dev")
-@Profile("local")
+@Profile("dev")
 @EnableMongoAuditing
 // @EnableAutoConfiguration(exclude = { MongoReactiveAutoConfiguration.class })
 
