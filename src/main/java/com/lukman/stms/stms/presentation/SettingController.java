@@ -89,8 +89,24 @@ public class SettingController {
                 FeesDto fee = service.createFee(feeEntity);
                 final SuccessResponse<FeesDto> res = new SuccessResponse<FeesDto>(
                                 "Fee Creted Successfully",
-                                200, fee);
+                                201, fee);
                 return ResponseEntity.status(201).body(res);
+        }
+
+        @GetMapping("/fees")
+        public ResponseEntity<SuccessResponse<List<FeesDto>>> fetchFees(@RequestParam String session,
+                        @RequestParam(required = false) Integer term) {
+                List<FeesDto> fees;
+                if (term == null) {
+                        fees = service.fetchAllFees(session);
+                } else {
+                        fees = service.fetchAllFees(session, term);
+                }
+
+                final SuccessResponse<List<FeesDto>> res = new SuccessResponse<List<FeesDto>>(
+                                "Fee Created Successfully",
+                                200, fees);
+                return ResponseEntity.status(200).body(res);
         }
 
 }

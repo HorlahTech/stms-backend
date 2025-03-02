@@ -20,8 +20,10 @@ public interface StudentClassService {
 
     public void updateTermDate(SessionDto terms);
 
-    public List<FeesStructureJ> fetchFees();
-
     public FeesDto createFee(FeesDto fee);
+
+    public List<FeesDto> fetchAllFees(String session);
+
+    public List<FeesDto> fetchAllFees(String session, int term);
 
 }

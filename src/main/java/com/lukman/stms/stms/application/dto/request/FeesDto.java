@@ -20,6 +20,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FeesDto {
+    private String id;
     @NotBlank(message = "Session Name is required")
     @NotEmpty(message = "Session Name is required")
     @NotNull(message = "Session Name is required")

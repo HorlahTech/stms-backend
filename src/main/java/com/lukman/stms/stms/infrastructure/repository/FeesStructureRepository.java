@@ -15,4 +15,14 @@ public interface FeesStructureRepository extends MongoRepository<FeesStructureJ,
             String sessionName,
             int term, String schoolCode);
 
+    @Query("{'sessionName':?0, 'term':?1, 'schoolCode':?2}")
+    List<FeesStructureJ> findBySessionNameAndTermAndSchoolCode(
+            String sessionName,
+            int term, String schoolCode);
+
+    @Query("{'sessionName':?0, 'schoolCode':?1}")
+    List<FeesStructureJ> findBySessionNameAndSchoolCode(
+            String sessionName,
+            String schoolCode);
+
 }

@@ -1,5 +1,6 @@
 package com.lukman.stms.stms.infrastructure.api;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,12 +127,6 @@ public class StudentClassImpl implements StudentClassService {
   }
 
   @Override
-  public List<FeesStructureJ> fetchFees() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'fetchFees'");
-  }
-
-  @Override
   public SessionDto getSession(String session) {
     List<StudentClass> classes = studentClassRepository.findBySessionAndSchoolCode(session,
         SchoolContext.getSchoolCode());
@@ -209,6 +204,32 @@ public class StudentClassImpl implements StudentClassService {
     newFee.setSchoolCode(SchoolContext.getSchoolCode());
 
     return modelMapper.map(feesRepo.save(newFee), FeesDto.class);
+  }
+
+  @Override
+  public List<FeesDto> fetchAllFees(String session) {
+    if (session.isEmpty() || session.isBlank()) {
+      throw new EmptyFieldException("Session name cannot be null");
+    }
+    List<FeesStructureJ> fees = feesRepo.findBySessionNameAndSchoolCode(session, SchoolContext.getSchoolCode());
+    Type listType = new TypeToken<List<FeesDto>>() {
+    }.getType();
+    return modelMapper.map(fees, listType);
+  }
+
+  @Override
+  public List<FeesDto> fetchAllFees(String session, int term) {
+    if (session.isEmpty() || session.isBlank()) {
+      throw new EmptyFieldException("Session name cannot be null");
+    }
+    if (term < 0 || term > 3) {
+      throw new EmptyFieldException("Invalid Term Input");
+    }
+    List<FeesStructureJ> fees = feesRepo.findBySessionNameAndTermAndSchoolCode(session, term,
+        SchoolContext.getSchoolCode());
+    Type listType = new TypeToken<List<FeesDto>>() {
+    }.getType();
+    return modelMapper.map(fees, listType);
   }
 
 }
