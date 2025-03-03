@@ -14,7 +14,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @Profile("dev")
 // @Profile("local")
 @EnableMongoAuditing
-// @EnableAutoConfiguration(exclude = { MongoReactiveAutoConfiguration.class })
 
 public class StmsApplication {
 

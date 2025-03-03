@@ -4,9 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lukman.stms.stms.application.constant.Gender;
 import com.lukman.stms.stms.application.dto.request.StudentGuardianDto;

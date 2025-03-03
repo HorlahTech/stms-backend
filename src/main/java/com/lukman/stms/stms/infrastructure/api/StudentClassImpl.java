@@ -232,4 +232,18 @@ public class StudentClassImpl implements StudentClassService {
     return modelMapper.map(fees, listType);
   }
 
+  @Override
+  public FeesDto editFee(FeesDto fee) {
+
+    fee.setSchoolCode(SchoolContext.getSchoolCode());
+    FeesStructureJ data = modelMapper.map(fee, FeesStructureJ.class);
+    // feesRepo.updateFeeByIdAndSchoolCode(data.getId(),
+    // SchoolContext.getSchoolCode(), data);
+    int a = feesRepo.updateCompleteFeesStructure(data.getId(), SchoolContext.getSchoolCode(), data.getTerm(),
+        data.getFeeName(),
+        data.getAmount(), data.getApplicability(), data.getAvailabilityStatus(), data.getClassesNames());
+    System.out.println("This is a:" + a);
+    return fee;
+  }
+
 }

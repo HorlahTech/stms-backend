@@ -2,11 +2,6 @@
 
 package com.lukman.stms.stms.application.dto.request;
 
-import java.time.LocalDateTime;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

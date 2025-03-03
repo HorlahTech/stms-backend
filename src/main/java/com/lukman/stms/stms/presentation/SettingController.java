@@ -109,4 +109,14 @@ public class SettingController {
                 return ResponseEntity.status(200).body(res);
         }
 
+        @PatchMapping("/fees")
+        public ResponseEntity<SuccessResponse<FeesDto>> updateFees(@RequestBody FeesDto fee) {
+
+                final FeesDto editedFee = service.editFee(fee);
+                final SuccessResponse<FeesDto> res = new SuccessResponse<FeesDto>(
+                                "Fee Created Successfully",
+                                200, editedFee);
+                return ResponseEntity.status(200).body(res);
+        }
+
 }

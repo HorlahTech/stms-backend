@@ -22,6 +22,8 @@ public interface StudentClassService {
 
     public FeesDto createFee(FeesDto fee);
 
+    public FeesDto editFee(FeesDto fee);
+
     public List<FeesDto> fetchAllFees(String session);
 
     public List<FeesDto> fetchAllFees(String session, int term);
