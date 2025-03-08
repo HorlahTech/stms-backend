@@ -114,7 +114,7 @@ public class SettingController {
 
                 final FeesDto editedFee = service.editFee(fee);
                 final SuccessResponse<FeesDto> res = new SuccessResponse<FeesDto>(
-                                "Fee Created Successfully",
+                                "Fee Updated Successfully",
                                 200, editedFee);
                 return ResponseEntity.status(200).body(res);
         }
