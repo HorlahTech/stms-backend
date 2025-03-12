@@ -17,8 +17,8 @@ public class HeaderInterceptor implements HandlerInterceptor {
             throws Exception {
         String schoolCode = request.getHeader(SCHOOLCODE_HEADER);
         if (schoolCode == null || schoolCode.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            throw new ForbiddenException("School Code is Required");
+            // response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            // throw new ForbiddenException("School Code is Required");
         } else {
             SchoolContext.setSchoolCode(schoolCode);
         }

@@ -45,9 +45,9 @@ public class StudentController {
             @RequestParam String session,
             @RequestParam(required = false) Integer term) {
         List<StudentResponseDto> students = new ArrayList<StudentResponseDto>();
-        if (className == null) {
+        if (className == null && session != null && !session.isEmpty() && term != null) {
             students = studentService.getallStudent(session, term);
-        } else if (term == null) {
+        } else if (term == null && session != null && !session.isEmpty()) {
             students = studentService.getallStudent(session);
         } else {
             students = studentService.getallStudent(ClassEnum.valueOf(className), session, term);

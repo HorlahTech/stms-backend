@@ -14,6 +14,7 @@ import com.lukman.stms.stms.application.constant.ClassEnum;
 import com.lukman.stms.stms.application.constant.StudentStatus;
 import com.lukman.stms.stms.application.dto.request.RegStudentDto;
 import com.lukman.stms.stms.application.dto.response.StudentResponseDto;
+import com.lukman.stms.stms.infrastructure.exception.ConflictException;
 import com.lukman.stms.stms.infrastructure.exception.EmptyFieldException;
 import com.lukman.stms.stms.infrastructure.exception.UserNotFoundException;
 import com.lukman.stms.stms.infrastructure.repository.StudentClassRepository;
@@ -46,14 +47,29 @@ public class StudentServiceImpl implements StudentService {
     public void registerStudent(RegStudentDto student) {
         if (student.getFirstName() == null) {
             throw new EmptyFieldException("Student First Name Cannot be Empty");
-        } else if (student.getSurName() == null) {
+        }
+        if (student.getSurName() == null) {
             throw new EmptyFieldException("Student Surname  Cannot be Empty");
-        } else if (student.getClassName() == null) {
+        }
+        if (student.getClassName() == null) {
             throw new EmptyFieldException("Student Class  Cannot be Empty");
-        } else if (student.getTerm() < 1 || student.getTerm() > 3) {
+        }
+        if (student.getTerm() < 1 || student.getTerm() > 3) {
             throw new EmptyFieldException("The term must be within 1 and 3");
-        } else if (student.getSession() == null) {
+        }
+        if (student.getSession() == null) {
             throw new EmptyFieldException("Session Cannot be Empty");
+        }
+        // System.out.println("Checking: " + student.getSurName() + ", " +
+        // student.getFirstName()
+        // + ", " + student.getMiddleName() + ", " + student.getHomeAddress()
+        // + ", " + SchoolContext.getSchoolCode());
+        boolean doesExist = repository.existsBySurNameAndFirstNameAndMiddleNameAndHomeAddressAndSchoolCode(
+                student.getSurName(),
+                student.getFirstName(), student.getMiddleName(), student.getHomeAddress(),
+                SchoolContext.getSchoolCode());
+        if (doesExist) {
+            throw new ConflictException("Student Already exist");
         }
 
         // StudentJ newStudent = new StudentJ();
@@ -68,6 +84,7 @@ public class StudentServiceImpl implements StudentService {
             newStudent.setRegistrationDate(LocalDate.now());
         }
         newStudent.setStatus(StudentStatus.active);
+        newStudent.setSchoolCode(SchoolContext.getSchoolCode());
 
         final StudentJ savedStudent = repository.save(newStudent);
 

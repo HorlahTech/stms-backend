@@ -35,7 +35,7 @@ public class StudentJ {
     private Gender gender;
     private String homeAddress;
     private String schoolCode;
-    // private String classId;
+    private String currrentClass;
     private StudentStatus status;
     private List<StudentGuardian> guardian;
 
