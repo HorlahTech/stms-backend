@@ -16,6 +16,8 @@ import com.lukman.stms.stms.application.dto.request.RegStudentDto;
 import com.lukman.stms.stms.application.dto.response.StudentResponseDto;
 import com.lukman.stms.stms.application.dto.response.SuccessResponse;
 import com.lukman.stms.stms.infrastructure.api.StudentServiceImpl;
+import com.lukman.stms.stms.infrastructure.exception.EmptyFieldException;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,11 +46,12 @@ public class StudentController {
             @RequestParam(required = false) String className,
             @RequestParam String session,
             @RequestParam(required = false) Integer term) {
+        if (session == null || session.isEmpty()) {
+            throw new EmptyFieldException("Session cannot be null");
+        }
         List<StudentResponseDto> students = new ArrayList<StudentResponseDto>();
-        if (className == null && session != null && !session.isEmpty() && term != null) {
+        if ((className == null || className.isEmpty()) && (term != null && term > 0)) {
             students = studentService.getallStudent(session, term);
-        } else if (term == null && session != null && !session.isEmpty()) {
-            students = studentService.getallStudent(session);
         } else {
             students = studentService.getallStudent(ClassEnum.valueOf(className), session, term);
         }

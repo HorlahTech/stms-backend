@@ -22,7 +22,9 @@ public class SchoolContext {
     }
 
     public static void setSchoolCode(String schoolId) {
-
+        staticSchoolRepository.findAll().forEach(ds -> System.out.println(ds.getCode()));
+        // System.out.println(staticSchoolRepository.findAll().forEach(ds ->
+        // ds.getCode()));
         if (staticSchoolRepository.existsByCode(schoolId)) {
             CURRENT_SCHOOL.set(schoolId);
         } else {

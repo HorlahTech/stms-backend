@@ -14,6 +14,7 @@ import com.lukman.stms.stms.application.constant.ClassEnum;
 import com.lukman.stms.stms.application.constant.StudentStatus;
 import com.lukman.stms.stms.application.dto.request.RegStudentDto;
 import com.lukman.stms.stms.application.dto.response.StudentResponseDto;
+import com.lukman.stms.stms.infrastructure.exception.AllCustomExceptionHandler;
 import com.lukman.stms.stms.infrastructure.exception.ConflictException;
 import com.lukman.stms.stms.infrastructure.exception.EmptyFieldException;
 import com.lukman.stms.stms.infrastructure.exception.UserNotFoundException;
@@ -30,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @AllArgsConstructor
+
 @Slf4j
 public class StudentServiceImpl implements StudentService {
 
@@ -88,37 +90,29 @@ public class StudentServiceImpl implements StudentService {
 
         final StudentJ savedStudent = repository.save(newStudent);
 
-        studentTermRepo.save(new StudentTermDataJ(savedStudent.getId(), clas.getId()));
+        studentTermRepo
+                .save(new StudentTermDataJ(SchoolContext.getSchoolCode(), savedStudent.getId(), clas.getId(),
+                        clas.getSession(), clas.getTerm()));
 
     }
 
     @Override
     public List<StudentResponseDto> getallStudent(String session, int term) {
-        final List<StudentClass> _classes = studentClassRepo.findBySessionAndTermAndSchoolCode(session, term,
+
+        List<StudentTermDataJ> terms = studentTermRepo.findBySessionNameAndTermAndSchoolCode(session, term,
                 SchoolContext.getSchoolCode());
-        // System.out.println(_classes);
-        final List<StudentResponseDto> studentDto = new ArrayList<StudentResponseDto>();
-        for (StudentClass _class : _classes) {
-            final List<StudentTermDataJ> termData = studentTermRepo.findByClassIdAndSchoolCode(_class.getId(),
-                    SchoolContext.getSchoolCode());
 
-            System.out.println(termData);
-            List<StudentResponseDto> students = termData.stream().map(_term -> {
-                final StudentJ student = repository.findById(_term.getStudentId())
-                        .orElseThrow(() -> new UserNotFoundException(
-                                String.format("Student with the Id: %s not found", _term.getStudentId())));
-                final StudentResponseDto dto = modelMapper.map(student, StudentResponseDto.class);
-                dto.setSession(_class.getSession());
-                dto.setCurrentClass(_class.getClassName());
-                dto.setTerm(_class.getTerm());
+        return terms.stream().map(_term -> {
+            final StudentJ student = repository.findById(_term.getStudentId())
+                    .orElseThrow(() -> new UserNotFoundException(
+                            String.format("Student with the Id: %s not found", _term.getStudentId())));
+            final StudentResponseDto dto = modelMapper.map(student, StudentResponseDto.class);
+            dto.setSession(_term.getSessionName());
+            dto.setTerm(_term.getTerm());
 
-                return dto;
-            }).collect(Collectors.toList());
-            studentDto.addAll(students);
+            return dto;
+        }).collect(Collectors.toList());
 
-        }
-
-        return studentDto;
     }
 
     @Override
@@ -153,29 +147,6 @@ public class StudentServiceImpl implements StudentService {
         }).collect(Collectors.toList());
 
         return students;
-    }
-
-    @Override
-    public List<StudentResponseDto> getallStudent(String session) {
-        List<StudentResponseDto> response = new ArrayList<StudentResponseDto>();
-        List<StudentClass> _classes = studentClassRepo.findBySessionAndSchoolCode(session,
-                SchoolContext.getSchoolCode());
-        _classes.stream().map(_class -> {
-            List<StudentResponseDto> students = studentTermRepo
-                    .findByClassIdAndSchoolCode(session, SchoolContext.getSchoolCode()).stream()
-                    .map(_term -> {
-                        StudentJ student = repository.findById(_term.getStudentId())
-                                .orElseThrow(
-                                        () -> new UserNotFoundException(String.format("Student with Id %s not Found"),
-                                                _term.getStudentId()));
-
-                        return modelMapper.map(student, StudentResponseDto.class);
-                    }).collect(Collectors.toList());
-            response.addAll(students);
-            return students;
-
-        });
-        return response;
     }
 
 }

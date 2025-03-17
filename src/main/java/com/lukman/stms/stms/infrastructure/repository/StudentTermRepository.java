@@ -13,4 +13,8 @@ public interface StudentTermRepository extends MongoRepository<StudentTermDataJ,
 
     List<StudentTermDataJ> findByClassIdAndSchoolCode(String classId, String schoolCode);
 
+    List<StudentTermDataJ> findBySessionNameAndSchoolCode(String sessionName, String schoolCode);
+
+    List<StudentTermDataJ> findBySessionNameAndTermAndSchoolCode(String sessionName, int term, String schoolCode);
+
 }
