@@ -16,7 +16,9 @@ public interface StudentClassService {
 
     List<StudentClassDto> getallSessionClass(String session);
 
-    SessionDto getSession(String session);
+    public SessionDto getSession(String session);
+
+    public void startTerm(String session, int term);
 
     public void updateTermDate(SessionDto terms);
 

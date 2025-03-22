@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -51,6 +52,18 @@ public class AllCustomExceptionHandler extends ResponseEntityExceptionHandler {
                                 LocalDateTime.now());
                 return new ResponseEntity<>(err,
                                 HttpStatus.FORBIDDEN);
+        }
+
+        @Override
+        public ResponseEntity<Object> handleHttpMessageNotReadable(
+                        HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status,
+                        WebRequest request) {
+                ResponseErrorDetails err = new ResponseErrorDetails(
+                                ex.getMessage(),
+                                400,
+                                LocalDateTime.now());
+                return new ResponseEntity<>(err,
+                                HttpStatus.BAD_REQUEST);
         }
 
         @ExceptionHandler(value = { UserNotFoundException.class })

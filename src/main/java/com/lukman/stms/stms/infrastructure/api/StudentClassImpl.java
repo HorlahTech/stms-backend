@@ -10,9 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.lukman.stms.stms.application.appconfig.SchoolContext;
+import com.lukman.stms.stms.application.constant.Applicability;
 import com.lukman.stms.stms.application.constant.ClassEnum;
+import com.lukman.stms.stms.application.constant.StudentStatus;
 import com.lukman.stms.stms.application.dto.request.StudentClassDto;
 import com.lukman.stms.stms.application.dto.request.TermDto;
 import com.lukman.stms.stms.application.dto.request.FeesDto;
@@ -20,13 +25,18 @@ import com.lukman.stms.stms.application.dto.request.RegisterSchoolDto;
 import com.lukman.stms.stms.application.dto.request.SessionDto;
 import com.lukman.stms.stms.infrastructure.exception.ConflictException;
 import com.lukman.stms.stms.infrastructure.exception.EmptyFieldException;
+import com.lukman.stms.stms.infrastructure.exception.UnknownException;
 import com.lukman.stms.stms.infrastructure.exception.UserNotFoundException;
 import com.lukman.stms.stms.infrastructure.repository.FeesStructureRepository;
 import com.lukman.stms.stms.infrastructure.repository.SchoolDetailsRepository;
 import com.lukman.stms.stms.infrastructure.repository.StudentClassRepository;
+import com.lukman.stms.stms.infrastructure.repository.StudentRepository;
+import com.lukman.stms.stms.infrastructure.repository.StudentTermRepository;
 import com.lukman.stms.stms.models.FeesStructureJ;
 import com.lukman.stms.stms.models.SchoolDetails;
 import com.lukman.stms.stms.models.StudentClass;
+import com.lukman.stms.stms.models.StudentJ;
+import com.lukman.stms.stms.models.StudentTermDataJ;
 import com.lukman.stms.stms.service.StudentClassService;
 
 import lombok.AllArgsConstructor;
@@ -39,6 +49,8 @@ public class StudentClassImpl implements StudentClassService {
   private SchoolDetailsRepository schoolRepository;
   private ModelMapper modelMapper;
   private FeesStructureRepository feesRepo;
+  private StudentTermRepository termdata;
+  private StudentRepository studentsRepo;
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
   @Override
@@ -244,6 +256,49 @@ public class StudentClassImpl implements StudentClassService {
         data.getAmount(), data.getApplicability(), data.getAvailabilityStatus(), data.getClassesNames());
     System.out.println("This is a:" + a);
     return fee;
+  }
+
+  @Override
+  public void startTerm(String session, int term) {
+    if (session.isEmpty() || session.isBlank()) {
+      throw new EmptyFieldException("Invalid Session Name");
+    }
+    if (term < 1 || term > 3) {
+      throw new EmptyFieldException("Invalid term");
+    }
+    if (termdata.existsBySessionNameAndTermAndSchoolCode(session, term, SchoolContext.getSchoolCode())) {
+      throw new ConflictException("term Data already exists");
+    }
+    List<StudentJ> students = studentsRepo.findByStatusAndSchoolCode(StudentStatus.active,
+        SchoolContext.getSchoolCode());
+    List<StudentTermDataJ> studdentTerm = students.stream().map(student -> {
+
+      StudentTermDataJ previoustTerm = termdata.findByStudentIdAndSessionNameAndTermAndSchoolCode(student.getId(),
+          session, term, SchoolContext.getSchoolCode());
+      // if (previoustTerm== null) {
+      // return new StudentTermDataJ()
+      // }
+
+      StudentClass previousClass = studentClassRepository.findById(previoustTerm.getClassId()).orElseThrow();
+
+      final List<FeesStructureJ> previousClassFees = feesRepo
+          .findBySessionNameAndTermAndSchoolCodeAndClassesName(
+              previoustTerm.getSessionName(),
+              previoustTerm.getTerm(),
+              SchoolContext.getSchoolCode(), previousClass.getClassName());
+
+      int previousFeeAmount = previousClassFees.stream()
+          .filter(s -> s.getApplicability().equals(Applicability.required)).mapToInt(FeesStructureJ::getAmount).sum();
+
+      StudentTermDataJ currentTermData = new StudentTermDataJ(SchoolContext.getSchoolCode(), student.getId(),
+
+          previoustTerm.getClassId(), session, term, 0,
+          (previoustTerm.getLastTermDebt() + previousFeeAmount) - previoustTerm.getAmountPaid(), 0);
+      return currentTermData;
+    }).collect(Collectors.toList());
+
+    termdata.saveAll(studdentTerm);
+
   }
 
 }

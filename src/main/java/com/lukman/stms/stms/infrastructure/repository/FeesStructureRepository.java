@@ -14,10 +14,10 @@ import com.lukman.stms.stms.models.FeesStructureJ;
 
 @Repository
 public interface FeesStructureRepository extends MongoRepository<FeesStructureJ, String> {
-        @Query("{'classesNames':?0,'sessionName':?1, 'term':?2, 'schoolCode':?3}")
-        List<FeesStructureJ> findByClassesNamesAndSessionNameAndTermAndSchoolCode(List<String> classesNames,
+        @Query("{'classesNames':?3,'sessionName':?0, 'term':?1, 'schoolCode':?2}")
+        List<FeesStructureJ> findBySessionNameAndTermAndSchoolCodeAndClassesName(
                         String sessionName,
-                        int term, String schoolCode);
+                        int term, String schoolCode, String... classesNames);
 
         @Query("{'sessionName':?0, 'term':?1, 'schoolCode':?2}")
         List<FeesStructureJ> findBySessionNameAndTermAndSchoolCode(

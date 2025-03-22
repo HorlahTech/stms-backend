@@ -32,10 +32,22 @@ public class StudentTermDataJ {
     public StudentTermDataJ(String schoolCode, String studentId, String classId, String session, int term) {
         this.schoolCode = schoolCode;
         this.studentId = studentId;
-
         this.classId = classId;
         this.sessionName = session;
         this.term = term;
+    }
+
+    public StudentTermDataJ(String schoolCode, String studentId, String classId, String session, int term,
+            int amountPaid, int lastTermDebt, int currentTermBalance) {
+        this.schoolCode = schoolCode;
+        this.studentId = studentId;
+        this.classId = classId;
+        this.sessionName = session;
+        this.term = term;
+        this.amountPaid = amountPaid;
+        this.lastTermDebt = lastTermDebt;
+        this.currentTermBalance = currentTermBalance;
+
     }
 
 }

@@ -119,4 +119,19 @@ public class SettingController {
                 return ResponseEntity.status(200).body(res);
         }
 
+        @PostMapping("/start-term")
+        public ResponseEntity<SuccessResponse> startTerm(@RequestBody String session) {
+
+                try {
+                        service.startTerm(session, 1);
+                } catch (Exception e) {
+                        throw new UnknownException("Something Went wrong");
+                }
+
+                final SuccessResponse<FeesDto> res = new SuccessResponse<FeesDto>(
+                                "Term Started Successfully",
+                                200);
+                return ResponseEntity.status(200).body(res);
+        }
+
 }
